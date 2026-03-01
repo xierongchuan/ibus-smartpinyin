@@ -1,3 +1,16 @@
+ibus-smartpinyin — fork of ibus-libpinyin
+=========================================
+
+version 1.17.0 (first release of ibus-smartpinyin)
+* forked from ibus-libpinyin 1.16.5
+* added SQLite-based user phrase learning (PYUserPhraseDatabase)
+* added UserPhraseCandidates provider with frequency-based promotion
+* syllable prefix matching for learned phrases
+* full rebrand: separate engine names (smartpinyin/smartbopomofo),
+  GSettings schema, data directories — can coexist with original
+
+--- history from upstream ibus-libpinyin ---
+
 version 1.16.5
 * bug fixes
 
