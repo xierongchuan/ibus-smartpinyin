@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2008-2010 Peng Huang <shawn.p.huang@gmail.com>
  *
@@ -165,12 +165,12 @@ ibus_pinyin_engine_constructor (GType                  type,
     name = ibus_engine_get_name ((IBusEngine *) engine);
 
     if (name) {
-        if (std::strcmp (name, "libpinyin") == 0 ||
-            std::strcmp (name, "libpinyin-debug") == 0) {
+        if (std::strcmp (name, "smartpinyin") == 0 ||
+            std::strcmp (name, "smartpinyin-debug") == 0) {
             engine->engine = new PinyinEngine (IBUS_ENGINE (engine));
         }
-        if (std::strcmp (name, "libbopomofo") == 0 ||
-            std::strcmp (name, "libbopomofo-debug") == 0 ) {
+        if (std::strcmp (name, "smartbopomofo") == 0 ||
+            std::strcmp (name, "smartbopomofo-debug") == 0 ) {
             engine->engine = new BopomofoEngine (IBUS_ENGINE (engine));
         }
     } else {

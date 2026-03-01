@@ -1,6 +1,6 @@
 # vim:set noet ts=4:
 #
-# ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+# ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
 #
 # Copyright (c) 2008-2010 Peng Huang <shawn.p.huang@gmail.com>
 #
@@ -29,9 +29,9 @@ network_DATA = network.txt
 
 networkdir = $(pkgdatadir)
 
-APPDATA_XML = libpinyin.appdata.xml
+APPDATA_XML = smartpinyin.appdata.xml
 
-gsettings_SCHEMAS = com.github.libpinyin.ibus-libpinyin.gschema.xml
+gsettings_SCHEMAS = com.github.xierongchuan.ibus-smartpinyin.gschema.xml
 
 @GSETTINGS_RULES@
 
@@ -62,8 +62,8 @@ appdatadir = @datadir@/metainfo
 appdata_DATA = $(APPDATA_XML)
 
 desktop_in_files = \
-	ibus-setup-libbopomofo.desktop.in \
-	ibus-setup-libpinyin.desktop.in \
+	ibus-setup-smartbopomofo.desktop.in \
+	ibus-setup-smartpinyin.desktop.in \
 	$(NULL)
 
 desktop_files = $(desktop_in_files:.desktop.in=.desktop)

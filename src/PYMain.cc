@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2008-2010 Peng Huang <shawn.p.huang@gmail.com>
  *
@@ -37,6 +37,7 @@
 #ifdef IBUS_BUILD_TABLE_INPUT_MODE
 #include "PYTableDatabase.h"
 #endif
+#include "PYUserPhraseDatabase.h"
 #include "PYXMLUtil.h"
 #ifdef ENABLE_LIBNOTIFY
 #include <libnotify/notify.h>
@@ -99,6 +100,7 @@ start_component (void)
     }
 
     LibPinyinBackEnd::init ();
+    UserPhraseDatabase::init ();
 
     PinyinConfig::init ();
     BopomofoConfig::init ();
@@ -113,32 +115,34 @@ start_component (void)
 
     g_signal_connect ((IBusBus *)bus, "disconnected", G_CALLBACK (ibus_disconnected_cb), NULL);
 
-    component = ibus_component_new ("org.freedesktop.IBus.Libpinyin",
-                                    N_("Libpinyin input method"),
+    component = ibus_component_new ("org.freedesktop.IBus.SmartPinyin",
+                                    N_("Smart Pinyin input method"),
                                     VERSION,
                                     "GPL",
-                                    "Peng Wu <alexepico@gmail.com>",
-                                    "https://github.com/libpinyin/ibus-libpinyin",
+                                    "xierongchuan <https://github.com/xierongchuan>",
+                                    "https://github.com/xierongchuan/ibus-smartpinyin",
                                     "",
-                                    "ibus-libpinyin");
+                                    "ibus-smartpinyin");
 
     ibus_component_add_engine (component,
-                               ibus_engine_desc_new ("libpinyin-debug",
-                                                     N_("Intelligent Pinyin (debug)"),
-                                                     N_("Intelligent Pinyin input method (debug)"),
+                               ibus_engine_desc_new ("smartpinyin-debug",
+                                                     N_("Smart Pinyin (debug)"),
+                                                     N_("Smart Pinyin input method (debug)"),
                                                      "zh_CN",
                                                      "GPL",
+                                                     "xierongchuan <https://github.com/xierongchuan>\n"
                                                      "Peng Huang <shawn.p.huang@gmail.com>\n"
                                                      "Peng Wu <alexepico@gmail.com>\n"
                                                      "BYVoid <byvoid1@gmail.com>",
                                                      PKGDATADIR "/icons/ibus-pinyin.svg",
                                                      "us"));
     ibus_component_add_engine (component,
-                               ibus_engine_desc_new ("libbopomofo-debug",
-                                                     N_("Bopomofo (debug)"),
-                                                     N_("Bopomofo input method (debug)"),
+                               ibus_engine_desc_new ("smartbopomofo-debug",
+                                                     N_("Smart Bopomofo (debug)"),
+                                                     N_("Smart Bopomofo input method (debug)"),
                                                      "zh_TW",
                                                      "GPL",
+                                                     "xierongchuan <https://github.com/xierongchuan>\n"
                                                      "BYVoid <byvoid1@gmail.com>\n"
                                                      "Peng Wu <alexepico@gmail.com>\n"
                                                      "Peng Huang <shawn.p.huang@gmail.com>",
@@ -148,13 +152,13 @@ start_component (void)
     factory = ibus_factory_new (ibus_bus_get_connection (bus));
 
     if (ibus) {
-        ibus_factory_add_engine (factory, "libpinyin", IBUS_TYPE_PINYIN_ENGINE);
-        ibus_factory_add_engine (factory, "libbopomofo", IBUS_TYPE_PINYIN_ENGINE);
-        ibus_bus_request_name (bus, "org.freedesktop.IBus.Libpinyin", 0);
+        ibus_factory_add_engine (factory, "smartpinyin", IBUS_TYPE_PINYIN_ENGINE);
+        ibus_factory_add_engine (factory, "smartbopomofo", IBUS_TYPE_PINYIN_ENGINE);
+        ibus_bus_request_name (bus, "org.freedesktop.IBus.SmartPinyin", 0);
     }
     else {
-        ibus_factory_add_engine (factory, "libpinyin-debug", IBUS_TYPE_PINYIN_ENGINE);
-        ibus_factory_add_engine (factory, "libbopomofo-debug", IBUS_TYPE_PINYIN_ENGINE);
+        ibus_factory_add_engine (factory, "smartpinyin-debug", IBUS_TYPE_PINYIN_ENGINE);
+        ibus_factory_add_engine (factory, "smartbopomofo-debug", IBUS_TYPE_PINYIN_ENGINE);
         ibus_bus_register_component (bus, component);
     }
 
@@ -193,7 +197,7 @@ print_engine_xml (void)
 
     /* check the user engines.xml first. */
     gchar * user_config = g_build_filename (g_get_user_config_dir (),
-                                            "ibus", "libpinyin", "engines.xml", NULL);
+                                            "ibus", "smartpinyin", "engines.xml", NULL);
     gchar * system_config = g_build_filename (PKGDATADIR, "default.xml", NULL);
 
     /* if not, print the default.xml and exit. */
@@ -229,8 +233,8 @@ print_engine_xml (void)
         return;
     }
 
-    /* if the version mis-match, create the new engines.xml by ibus-setup-libpinyin. */
-    g_spawn_command_line_sync (LIBEXECDIR"/ibus-setup-libpinyin resync-engine",
+    /* if the version mis-match, create the new engines.xml by ibus-setup-smartpinyin. */
+    g_spawn_command_line_sync (LIBEXECDIR"/ibus-setup-smartpinyin resync-engine",
                                NULL, NULL, NULL, NULL);
 
     /* print the user engines.xml. */
@@ -258,7 +262,7 @@ main (gint argc, gchar **argv)
 
     context = g_option_context_new ("- ibus pinyin engine component");
 
-    g_option_context_add_main_entries (context, entries, "ibus-libpinyin");
+    g_option_context_add_main_entries (context, entries, "ibus-smartpinyin");
 
     if (!g_option_context_parse (context, &argc, &argv, &error)) {
         g_print ("Option parsing failed: %s\n", error->message);
@@ -275,7 +279,7 @@ main (gint argc, gchar **argv)
     atexit (atexit_cb);
 
 #ifdef ENABLE_LIBNOTIFY
-    if (!notify_init("ibus-libpinyin")) {
+    if (!notify_init("ibus-smartpinyin")) {
         g_error("notify_init failed");
         exit(1);
     }

@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2012 Peng Wu <alexepico@gmail.com>
  *
@@ -48,7 +48,7 @@ TableDatabase::init ()
     }
 
     gchar *path = g_build_filename (g_get_user_cache_dir (),
-                                    "ibus", "libpinyin", "table-user.db", NULL);
+                                    "ibus", "smartpinyin", "table-user.db", NULL);
 
     if (!m_user_instance->isDatabaseExisted (path))
         result = m_user_instance->createDatabase (path);

@@ -1,7 +1,7 @@
 # vim:set et ts=4 sts=4:
 # -*- coding: utf-8 -*-
 #
-# ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+# ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
 #
 # Copyright (c) 2014 Peng Wu <alexepico@gmail.com>
 #
@@ -32,7 +32,7 @@ from gi.repository import Gtk
 
 from keyboardshortcut import KeyboardShortcutSelectionDialog
 
-gettext.install('ibus-libpinyin')
+gettext.install('ibus-smartpinyin')
 
 (
 COLUMN_DESCRIPTION,

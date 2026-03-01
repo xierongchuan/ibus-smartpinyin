@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=IBus Smart Bopomofo Preferences
+Comment=Set ibus-smartbopomofo Preferences
+Exec=@libexecdir@/ibus-setup-smartpinyin smartbopomofo
+Icon=@pkgdatadir@/icons/ibus-bopomofo.svg
+NoDisplay=true
+Type=Application
+StartupNotify=true

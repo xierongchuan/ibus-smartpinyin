@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2011 Peng Wu <alexepico@gmail.com>
  *
@@ -42,6 +42,7 @@
 #endif
 
 #include "PYPEmojiCandidates.h"
+#include "PYPUserPhraseCandidates.h"
 
 #ifdef ENABLE_CLOUD_INPUT_MODE
 #include "PYPCloudCandidates.h"
@@ -52,6 +53,7 @@ namespace PY {
 class PhoneticEditor : public Editor {
     friend class LibPinyinCandidates;
     friend class CloudCandidates;
+    friend class UserPhraseCandidates;
 
 public:
     PhoneticEditor (PinyinProperties & props, Config & config);
@@ -123,11 +125,16 @@ protected:
     /* use LibPinyinBackEnd here. */
     pinyin_instance_t           *m_instance;
 
+    /* cached pinyin fragments from parse, before pinyin_guess_candidates
+       may invalidate pinyin key rest positions. */
+    std::vector<std::string>    m_pinyin_fragments;
+
     /* use EnhancedCandidates here. */
     std::vector<EnhancedCandidate> m_candidates;
 
     /* several EnhancedCandidates providers. */
     LibPinyinCandidates m_libpinyin_candidates;
+    UserPhraseCandidates m_user_phrase_candidates;
 
 #ifdef IBUS_BUILD_LUA_EXTENSION
     LuaTriggerCandidates m_lua_trigger_candidates;

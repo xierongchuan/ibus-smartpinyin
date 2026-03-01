@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2011 Peng Wu <alexepico@gmail.com>
  *
@@ -19,6 +19,7 @@
  */
 
 #include "PYPFullPinyinEditor.h"
+#include <pinyin.h>
 #include "PYConfig.h"
 #include "PYLibPinyin.h"
 
@@ -97,12 +98,32 @@ FullPinyinEditor::updatePinyin (void)
         /* TODO: check whether to replace "" with NULL. */
         pinyin_parse_more_full_pinyins (m_instance, "");
         pinyin_guess_sentence (m_instance);
+        m_pinyin_fragments.clear ();
         return;
     }
 
     m_pinyin_len =
         pinyin_parse_more_full_pinyins (m_instance, m_text.c_str ());
     pinyin_guess_sentence (m_instance);
+
+    /* cache pinyin fragments now, before pinyin_guess_candidates
+       may invalidate pinyin key rest positions.
+       Use pinyin_get_right_pinyin_offset to walk syllable boundaries. */
+    m_pinyin_fragments.clear ();
+    size_t frag_begin = 0;
+    size_t text_len = m_text.length ();
+    size_t parsed_len = pinyin_get_parsed_input_length (m_instance);
+    while (frag_begin < parsed_len && frag_begin < text_len) {
+        size_t frag_end = 0;
+        if (!pinyin_get_right_pinyin_offset (m_instance, frag_begin, &frag_end))
+            break;
+        if (frag_end <= frag_begin)
+            break;
+        if (frag_end > text_len)
+            frag_end = text_len;
+        m_pinyin_fragments.push_back (std::string (m_text.c_str () + frag_begin, frag_end - frag_begin));
+        frag_begin = frag_end;
+    }
 }
 
 void

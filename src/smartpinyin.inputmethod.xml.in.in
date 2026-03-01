@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- filename: smartpinyin.xml -->
+<component>
+	<name>org.freedesktop.IBus.SmartPinyin</name>
+	<description>Smart Pinyin Component</description>
+	<exec>@LIBEXECDIR@/ibus-engine-smartpinyin --ibus</exec>
+	<version>@VERSION@</version>
+	<author>xierongchuan &lt;https://github.com/xierongchuan&gt;</author>
+	<license>GPL</license>
+	<homepage>https://github.com/xierongchuan/ibus-smartpinyin</homepage>
+	<textdomain>ibus-smartpinyin</textdomain>
+
+	<!-- for engines -->
+	<observed-paths>
+		<path>~/.config/ibus/smartpinyin/engines.xml</path>
+		<path>@PKGDATADIR@/default.xml</path>
+	</observed-paths>
+    <engines exec="@LIBEXECDIR@/ibus-engine-smartpinyin --xml" />
+</component>

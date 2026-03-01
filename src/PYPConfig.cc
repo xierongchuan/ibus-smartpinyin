@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2008-2010 Peng Huang <shawn.p.huang@gmail.com>
  *
@@ -308,7 +308,7 @@ LibPinyinConfig::readDefaultValues (void)
         }
     }
 
-    m_remember_every_input = read (CONFIG_REMEMBER_EVERY_INPUT, false);
+    m_remember_every_input = read (CONFIG_REMEMBER_EVERY_INPUT, true);
 
     index = read (CONFIG_SORT_OPTION, 0);
     m_sort_option = SORT_BY_PHRASE_LENGTH | SORT_BY_PINYIN_LENGTH | SORT_BY_FREQUENCY;
@@ -517,9 +517,9 @@ LibPinyinConfig::valueChangedCallback (GSettings   *settings,
     self->valueChanged (self->m_schema_id, name, value);
     g_variant_unref (value);
 
-    if (self->m_schema_id == "com.github.libpinyin.ibus-libpinyin.libpinyin")
+    if (self->m_schema_id == "com.github.xierongchuan.ibus-smartpinyin.libpinyin")
         LibPinyinBackEnd::instance ().setPinyinOptions (self);
-    if (self->m_schema_id == "com.github.libpinyin.ibus-libpinyin.libbopomofo")
+    if (self->m_schema_id == "com.github.xierongchuan.ibus-smartpinyin.libbopomofo")
         LibPinyinBackEnd::instance ().setChewingOptions (self);
 }
 
@@ -552,7 +552,7 @@ static const struct{
 };
 
 PinyinConfig::PinyinConfig ()
-    : LibPinyinConfig ("com.github.libpinyin.ibus-libpinyin.libpinyin")
+    : LibPinyinConfig ("com.github.xierongchuan.ibus-smartpinyin.libpinyin")
 {
 }
 
@@ -759,7 +759,7 @@ static const struct {
 };
 
 BopomofoConfig::BopomofoConfig ()
-    : LibPinyinConfig ("com.github.libpinyin.ibus-libpinyin.libbopomofo")
+    : LibPinyinConfig ("com.github.xierongchuan.ibus-smartpinyin.libbopomofo")
 {
 }
 

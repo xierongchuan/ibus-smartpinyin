@@ -1,6 +1,6 @@
 # vim:set et sts=4 sw=4:
 #
-# ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+# ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
 #
 # Copyright (c) 2007-2014 Peng Huang <shawn.p.huang@gmail.com>
 # Copyright (c) 2007-2014 Red Hat, Inc.
@@ -39,7 +39,7 @@ from gi.repository import Pango
 locale.setlocale(locale.LC_ALL, "")
 localedir = os.getenv("IBUS_LOCALEDIR")
 pkgdatadir = os.getenv("IBUS_PKGDATADIR") or "."
-gettext.install('ibus-libpinyin', localedir)
+gettext.install('ibus-smartpinyin', localedir)
 
 class KeyboardShortcutSelection(Gtk.Box):
     def __init__(self, shortcut = None):

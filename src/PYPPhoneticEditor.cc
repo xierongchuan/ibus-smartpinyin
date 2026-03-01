@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2011 Peng Wu <alexepico@gmail.com>
  *
@@ -22,6 +22,7 @@
 #include <assert.h>
 #include "PYConfig.h"
 #include "PYPinyinProperties.h"
+#include "PYUserPhraseDatabase.h"
 
 using namespace PY;
 
@@ -33,6 +34,7 @@ PhoneticEditor::PhoneticEditor (PinyinProperties &props,
     m_lookup_table (m_config.pageSize ()),
     m_lookup_cursor (0),
     m_libpinyin_candidates (this),
+    m_user_phrase_candidates (this),
 #ifdef IBUS_BUILD_LUA_EXTENSION
     m_lua_trigger_candidates (this),
     m_lua_converter_candidates (this),
@@ -235,6 +237,10 @@ PhoneticEditor::updateCandidates (void)
 
     m_libpinyin_candidates.processCandidates (m_candidates);
 
+    /* user phrase candidates from custom SQLite DB — inserted after
+       libpinyin's nbest/longer candidates but before normal ones. */
+    m_user_phrase_candidates.processCandidates (m_candidates);
+
     if (m_config.emojiCandidate ())
         m_emoji_candidates.processCandidates (m_candidates);
 
@@ -277,7 +283,8 @@ PhoneticEditor::fillLookupTable (void)
         Text text (word);
 
         /* show user candidate as blue. */
-        if (CANDIDATE_USER == candidate.m_candidate_type)
+        if (CANDIDATE_USER == candidate.m_candidate_type ||
+            CANDIDATE_USER_PHRASE == candidate.m_candidate_type)
             text.appendAttribute (IBUS_ATTR_TYPE_FOREGROUND, 0x000000ef, 0, -1);
 
         m_lookup_table.appendCandidate (text);
@@ -424,6 +431,9 @@ PhoneticEditor::selectCandidateInternal (EnhancedCandidate & candidate)
     case CANDIDATE_EMOJI:
         return m_emoji_candidates.selectCandidate (candidate);
 
+    case CANDIDATE_USER_PHRASE:
+        return m_user_phrase_candidates.selectCandidate (candidate);
+
     default:
         assert (FALSE);
     }
@@ -458,6 +468,9 @@ PhoneticEditor::removeCandidateInternal (EnhancedCandidate & candidate)
 
     case CANDIDATE_EMOJI:
         return m_emoji_candidates.removeCandidate (candidate);
+
+    case CANDIDATE_USER_PHRASE:
+        return m_user_phrase_candidates.removeCandidate (candidate);
 
     default:
         assert (FALSE);

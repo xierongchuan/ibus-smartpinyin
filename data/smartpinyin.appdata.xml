@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="inputmethod">
+  <id>com.github.xierongchuan.ibus-smartpinyin</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <name>Smart Pinyin</name>
+  <summary>Smart Chinese Pinyin and Zhuyin input method with user phrase learning</summary>
+  <description>
+    <p>
+      Smart Pinyin is a fork of ibus-libpinyin with enhanced user phrase learning.
+      It uses a SQLite-based database to remember custom words and phrases,
+      promoting frequently used ones to the top of the candidate list.
+    </p>
+    <p>
+      Input methods are typing systems allowing users to input complex languages.
+      They are necessary because these contain too many characters to simply be laid
+      out on a traditional keyboard.
+    </p>
+  </description>
+  <url type="homepage">https://github.com/xierongchuan/ibus-smartpinyin</url>
+  <developer_name>xierongchuan</developer_name>
+  <url type="bugtracker">https://github.com/xierongchuan/ibus-smartpinyin/issues</url>
+  <update_contact>https://github.com/xierongchuan</update_contact>
+</component>

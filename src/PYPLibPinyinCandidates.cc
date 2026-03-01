@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2018 Peng Wu <alexepico@gmail.com>
  *
@@ -20,10 +20,29 @@
 
 #include "PYPLibPinyinCandidates.h"
 #include <assert.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <time.h>
 #include <pinyin.h>
 #include "PYConfig.h"
 #include "PYLibPinyin.h"
 #include "PYPPhoneticEditor.h"
+
+static void
+debug_log (const char *fmt, ...)
+{
+    FILE *f = fopen ("/tmp/user-phrase-debug.log", "a");
+    if (!f) return;
+    time_t now = time (NULL);
+    struct tm *t = localtime (&now);
+    fprintf (f, "[%02d:%02d:%02d] ", t->tm_hour, t->tm_min, t->tm_sec);
+    va_list ap;
+    va_start (ap, fmt);
+    vfprintf (f, fmt, ap);
+    va_end (ap);
+    fprintf (f, "\n");
+    fclose (f);
+}
 
 
 using namespace PY;
@@ -104,6 +123,11 @@ LibPinyinCandidates::selectCandidate (EnhancedCandidate & enhanced)
     lookup_candidate_t * candidate = NULL;
     pinyin_get_candidate (instance, enhanced.m_candidate_id, &candidate);
 
+    debug_log ("selectCandidate type=%d id=%u text='%s' rememberEvery=%d",
+               enhanced.m_candidate_type, enhanced.m_candidate_id,
+               m_editor->m_text.c_str (),
+               m_editor->m_config.rememberEveryInput ());
+
     gchar * str = NULL;
     if (CANDIDATE_NBEST_MATCH == enhanced.m_candidate_type) {
         /* because nbest match candidate
@@ -118,7 +142,7 @@ LibPinyinCandidates::selectCandidate (EnhancedCandidate & enhanced)
 
         pinyin_get_sentence (instance, index, &str);
         if (m_editor->m_config.rememberEveryInput ())
-            LibPinyinBackEnd::instance ().rememberUserInput (instance, str);
+            LibPinyinBackEnd::instance ().rememberUserInput (instance, m_editor->m_text.c_str (), str);
         LibPinyinBackEnd::instance ().modified ();
         g_free (str);
 
@@ -131,6 +155,12 @@ LibPinyinCandidates::selectCandidate (EnhancedCandidate & enhanced)
            starts from the beginning of user input. */
         pinyin_choose_candidate (instance, 0, candidate);
 
+        if (m_editor->m_config.rememberEveryInput ()) {
+            const gchar *candidate_str = NULL;
+            pinyin_get_candidate_string (instance, candidate, &candidate_str);
+            if (candidate_str)
+                LibPinyinBackEnd::instance ().rememberUserInput (instance, m_editor->m_text.c_str (), candidate_str);
+        }
         LibPinyinBackEnd::instance ().modified ();
 
         return SELECT_CANDIDATE_COMMIT;
@@ -139,6 +169,12 @@ LibPinyinCandidates::selectCandidate (EnhancedCandidate & enhanced)
     if (m_editor->m_config.sortOption () & SORT_WITHOUT_SENTENCE_CANDIDATE) {
         pinyin_choose_candidate (instance, 0, candidate);
 
+        if (m_editor->m_config.rememberEveryInput ()) {
+            const gchar *candidate_str = NULL;
+            pinyin_get_candidate_string (instance, candidate, &candidate_str);
+            if (candidate_str)
+                LibPinyinBackEnd::instance ().rememberUserInput (instance, m_editor->m_text.c_str (), candidate_str);
+        }
         LibPinyinBackEnd::instance ().modified ();
 
         return SELECT_CANDIDATE_COMMIT;
@@ -155,7 +191,7 @@ LibPinyinCandidates::selectCandidate (EnhancedCandidate & enhanced)
         pinyin_train (instance, 0);
 
         if (m_editor->m_config.rememberEveryInput ())
-            LibPinyinBackEnd::instance ().rememberUserInput (instance, str);
+            LibPinyinBackEnd::instance ().rememberUserInput (instance, m_editor->m_text.c_str (), str);
         LibPinyinBackEnd::instance ().modified ();
         g_free (str);
 

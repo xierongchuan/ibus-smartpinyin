@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2011 Peng Wu <alexepico@gmail.com>
  *
@@ -22,11 +22,32 @@
 
 #include <string.h>
 #include <time.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <vector>
+#include <string>
 #include <pinyin.h>
 #include "PYString.h"
 #include "PYPConfig.h"
+#include "PYUserPhraseDatabase.h"
 
-#define LIBPINYIN_SAVE_TIMEOUT   (5 * 60)
+static void
+debug_log (const char *fmt, ...)
+{
+    FILE *f = fopen ("/tmp/user-phrase-debug.log", "a");
+    if (!f) return;
+    time_t now = time (NULL);
+    struct tm *t = localtime (&now);
+    fprintf (f, "[%02d:%02d:%02d] ", t->tm_hour, t->tm_min, t->tm_sec);
+    va_list ap;
+    va_start (ap, fmt);
+    vfprintf (f, fmt, ap);
+    va_end (ap);
+    fprintf (f, "\n");
+    fclose (f);
+}
+
+#define LIBPINYIN_SAVE_TIMEOUT   (60)
 
 using namespace PY;
 
@@ -61,7 +82,7 @@ LibPinyinBackEnd::initPinyinContext (Config *config)
     pinyin_context_t * context = NULL;
 
     gchar * userdir = g_build_filename (g_get_user_cache_dir (),
-                                        "ibus", "libpinyin", NULL);
+                                        "ibus", "smartpinyin", NULL);
     int retval = g_mkdir_with_parents (userdir, 0700);
     if (retval) {
         g_free (userdir); userdir = NULL;
@@ -119,7 +140,7 @@ LibPinyinBackEnd::initChewingContext (Config *config)
     pinyin_context_t * context = NULL;
 
     gchar * userdir = g_build_filename (g_get_user_cache_dir (),
-                                        "ibus", "libbopomofo", NULL);
+                                        "ibus", "smartbopomofo", NULL);
     int retval = g_mkdir_with_parents (userdir, 0700);
     if (retval) {
         g_free(userdir); userdir = NULL;
@@ -380,13 +401,62 @@ LibPinyinBackEnd::clearPinyinUserData (const char *target)
     return TRUE;
 }
 
+static std::vector<std::string>
+extractSyllablesFromInstance (pinyin_instance_t *instance, const gchar *raw_text)
+{
+    std::vector<std::string> syllables;
+    if (!instance || !raw_text)
+        return syllables;
+
+    size_t len = strlen (raw_text);
+    size_t parsed = pinyin_get_parsed_input_length (instance);
+    if (parsed == 0)
+        return syllables;
+
+    /* use pinyin_get_right_pinyin_offset to walk syllable boundaries:
+       offset=0 → right=3 (xie), offset=3 → right=7 (rong), etc. */
+    size_t begin = 0;
+    while (begin < parsed && begin < len) {
+        size_t end = 0;
+        if (!pinyin_get_right_pinyin_offset (instance, begin, &end))
+            break;
+        if (end <= begin)
+            break;
+        if (end > len)
+            end = len;
+        std::string syl (raw_text + begin, end - begin);
+        debug_log ("  extractSyllable[%zu]: %zu-%zu '%s'",
+                   syllables.size (), begin, end, syl.c_str ());
+        syllables.push_back (syl);
+        begin = end;
+    }
+    debug_log ("extractSyllables: raw='%s' count=%zu", raw_text, syllables.size ());
+    return syllables;
+}
+
 gboolean
 LibPinyinBackEnd::rememberUserInput (pinyin_instance_t *instance,
+                                     const gchar *pinyin,
                                      const gchar *phrase)
 {
-    /* pre-check the incomplete pinyin keys, prepare pinyin string,
-       remember user input. */
+    /* reset and re-parse pinyin to get clean key rest positions. */
+    debug_log ("rememberUserInput: pinyin='%s' phrase='%s'", pinyin, phrase);
+    pinyin_reset (instance);
+    size_t parsed = pinyin_parse_more_full_pinyins (instance, pinyin);
+    debug_log ("rememberUserInput: parsed=%zu chars", parsed);
+
+    /* extract syllables BEFORE pinyin_remember_user_input, which may
+       mutate the instance and invalidate pinyin key rest positions. */
+    std::vector<std::string> syllables = extractSyllablesFromInstance (instance, pinyin);
+
     pinyin_remember_user_input (instance, phrase, -1);
+
+    /* also learn in the custom user phrase database for prefix matching. */
+    if (syllables.size () > 1) {
+        debug_log ("learning '%s' pinyin='%s' syllables=%zu",
+                   phrase, pinyin, syllables.size ());
+        UserPhraseDatabase::instance ().learnPhrase (phrase, syllables);
+    }
 
     /* save later,
        will mark modified from pinyin/bopomofo editor. */
@@ -398,8 +468,22 @@ LibPinyinBackEnd::rememberCloudInput (pinyin_instance_t *instance,
                                       const gchar *pinyin,
                                       const gchar *phrase)
 {
+    /* reset and re-parse pinyin to get clean key rest positions. */
+    pinyin_reset (instance);
     pinyin_parse_more_full_pinyins (instance, pinyin);
+
+    /* extract syllables BEFORE pinyin_remember_user_input. */
+    std::vector<std::string> syllables = extractSyllablesFromInstance (instance, pinyin);
+
     pinyin_remember_user_input (instance, phrase, -1);
+
+    /* also learn in the custom user phrase database. */
+    if (syllables.size () > 1) {
+        debug_log ("learning cloud '%s' pinyin='%s' syllables=%zu",
+                   phrase, pinyin, syllables.size ());
+        UserPhraseDatabase::instance ().learnPhrase (phrase, syllables);
+    }
+
     return TRUE;
 }
 

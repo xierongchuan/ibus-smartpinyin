@@ -1,7 +1,7 @@
 # vim:set et ts=4 sts=4:
 # -*- coding: utf-8 -*-
 #
-# ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+# ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
 #
 # Copyright (c) 2024 Peng Wu <alexepico@gmail.com>
 #
@@ -43,7 +43,7 @@ def save_layout():
     assert len(names) == len(layouts)
     for i, name in enumerate(names):
         engine = name.childNodes[0].data
-        config_namespace = "com.github.libpinyin.ibus-libpinyin." + engine
+        config_namespace = "com.github.xierongchuan.ibus-smartpinyin." + engine
         config = Gio.Settings.new(config_namespace)
         var = config.get_value("keyboard-layout")
         assert 's' == var.get_type_string()
@@ -51,7 +51,7 @@ def save_layout():
         layouts[i].childNodes[0].data = layout
 
     user_config = os.path.join(GLib.get_user_config_dir(),
-                               'ibus', 'libpinyin', 'engines.xml')
+                               'ibus', 'smartpinyin', 'engines.xml')
     dir = os.path.dirname(user_config)
     os.path.exists(dir) or os.makedirs(dir, 0o700)
     # io.open() causes TypeError for unicode.
@@ -62,7 +62,7 @@ def save_layout():
 
 def resync_engine_file():
     user_config = os.path.join(GLib.get_user_config_dir(),
-                               'ibus', 'libpinyin', 'engines.xml')
+                               'ibus', 'smartpinyin', 'engines.xml')
     system_config = os.path.join(pkgdatadir, 'default.xml')
     if not os.path.exists(user_config):
         return

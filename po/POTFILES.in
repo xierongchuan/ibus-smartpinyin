@@ -19,6 +19,6 @@ setup/config.py
 setup/dicttreeview.py
 setup/keyboardshortcut.py
 setup/shortcuteditor.py
-setup/ibus-libpinyin-preferences.ui
+setup/ibus-smartpinyin-preferences.ui
 data/ibus-setup-libpinyin.desktop.in
-data/ibus-setup-libbopomofo.desktop.in
+data/ibus-setup-smartbopomofo.desktop.in

@@ -1,6 +1,6 @@
 # vim:set et ts=4:
 #
-# ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+# ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
 #
 # Copyright (c) 2008-2010 Peng Huang <shawn.p.huang@gmail.com>
 #
@@ -29,7 +29,7 @@ m4_define(ibus_maybe_datestamp,
 m4_define([ibus_version],
     ibus_major_version.ibus_minor_version.ibus_micro_version[]ibus_maybe_datestamp)
 
-AC_INIT([ibus-libpinyin], [ibus_version], [https://github.com/libpinyin/ibus-libpinyin/issues/new],[ibus-libpinyin])
+AC_INIT([ibus-smartpinyin], [ibus_version], [https://github.com/xierongchuan/ibus-smartpinyin/issues/new],[ibus-smartpinyin])
 AM_INIT_AUTOMAKE([1.10])
 AC_GNU_SOURCE
 
@@ -144,7 +144,7 @@ if test x"$enable_opencc" = x"yes"; then
 fi
 
 # define GETTEXT_* variables
-GETTEXT_PACKAGE=ibus-libpinyin
+GETTEXT_PACKAGE=ibus-smartpinyin
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package])
 
@@ -257,14 +257,14 @@ fi
 # OUTPUT files
 AC_CONFIG_FILES([ po/Makefile.in
 Makefile
-ibus-libpinyin.spec
+ibus-smartpinyin.spec
 lua/Makefile
 scripts/Makefile
 src/Makefile
-src/libpinyin.inputmethod.xml.in
+src/smartpinyin.inputmethod.xml.in
 src/default.inputmethod.xml.in
 setup/Makefile
-setup/ibus-setup-libpinyin
+setup/ibus-setup-smartpinyin
 setup/config.py
 data/Makefile
 data/icons/Makefile

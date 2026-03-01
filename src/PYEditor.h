@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2008-2010 Peng Huang <shawn.p.huang@gmail.com>
  *
@@ -41,6 +41,7 @@ class LuaTriggerCandidates;
 class LuaConverterCandidates;
 class EmojiCandidates;
 class EnglishCandidates;
+class UserPhraseCandidates;
 
 class Editor {
     friend class TraditionalCandidates;
@@ -52,6 +53,7 @@ class Editor {
 
     friend class EmojiCandidates;
     friend class EnglishCandidates;
+    friend class UserPhraseCandidates;
 
 public:
     Editor (PinyinProperties & prop, Config & config);

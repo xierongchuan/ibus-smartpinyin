@@ -1,7 +1,7 @@
 # vim:set et ts=4 sts=4:
 # -*- coding: utf-8 -*-
 #
-# ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+# ibus-smartpinyin - Intelligent Pinyin engine based on libpinyin for IBus
 #
 # Copyright (c) 2008-2010 Peng Huang <shawn.p.huang@gmail.com>
 # Copyright (c) 2010 BYVoid <byvoid1@gmail.com>
@@ -39,7 +39,7 @@ from gi.repository import Gio
 
 # set_prgname before importing other modules to show the name in warning
 # messages when import modules are failed. E.g. Gtk.
-GLib.set_prgname('ibus-setup-libpinyin')
+GLib.set_prgname('ibus-setup-smartpinyin')
 
 from gi.repository import Gtk
 from gi.repository import IBus
@@ -48,7 +48,7 @@ import config
 from dicttreeview import DictionaryTreeView
 from shortcuteditor import ShortcutEditor
 
-DOMAINNAME = 'ibus-libpinyin'
+DOMAINNAME = 'ibus-smartpinyin'
 locale.setlocale(locale.LC_ALL, "")
 localedir = os.getenv("IBUS_LOCALEDIR")
 pkgdatadir = os.getenv("IBUS_PKGDATADIR") or "."
@@ -76,12 +76,12 @@ class PreferencesDialog:
         self.__bus = IBus.Bus()
         self.__builder = Gtk.Builder()
         self.__builder.set_translation_domain(DOMAINNAME)
-        self.__builder.add_from_file("ibus-libpinyin-preferences.ui")
+        self.__builder.add_from_file("ibus-smartpinyin-preferences.ui")
         self.__dialog = self.__builder.get_object("dialog")
         self.__init_pages()
 
-        if engine == "libpinyin":
-            self.__config_namespace = "com.github.libpinyin.ibus-libpinyin.libpinyin"
+        if engine == "smartpinyin":
+            self.__config_namespace = "com.github.xierongchuan.ibus-smartpinyin.libpinyin"
             self.__config = Gio.Settings.new(self.__config_namespace)
             self.__init_general()
             self.__init_pinyin()
@@ -91,8 +91,8 @@ class PreferencesDialog:
             self.__init_shortcut()
             self.__init_cloud_input()
             self.__init_about()
-        elif engine == "libbopomofo":
-            self.__config_namespace = "com.github.libpinyin.ibus-libpinyin.libbopomofo"
+        elif engine == "smartbopomofo":
+            self.__config_namespace = "com.github.xierongchuan.ibus-smartpinyin.libbopomofo"
             self.__config = Gio.Settings.new(self.__config_namespace)
             self.__init_general()
             self.__init_bopomofo()
@@ -511,7 +511,7 @@ class PreferencesDialog:
 
     def __edit_lua_cb(self, widget):
         import shutil
-        path = os.path.join(GLib.get_user_config_dir(), "ibus", "libpinyin")
+        path = os.path.join(GLib.get_user_config_dir(), "ibus", "smartpinyin")
         os.path.exists(path) or os.makedirs(path)
         path = os.path.join(path, "user.lua")
         if not os.path.exists(path):
@@ -698,7 +698,7 @@ class PreferencesDialog:
         self.__about_icon.set_from_file(icon_path)
 
         self.__name_version = self.__builder.get_object("NameVersion")
-        self.__name_version.set_markup(_("<big><b>Intelligent Pinyin %s</b></big>") % config.get_version())
+        self.__name_version.set_markup(_("<big><b>Smart Pinyin %s</b></big>") % config.get_version())
 
     def __changed_cb(self, widget, name):
         self.__set_value(name, widget.get_active())
@@ -737,7 +737,7 @@ class PreferencesDialog:
         return self.__dialog.run()
 
 def main():
-    command_name = "libpinyin"
+    command_name = "smartpinyin"
     if len(sys.argv) == 2:
         command_name = sys.argv[1]
 
@@ -745,8 +745,8 @@ def main():
     if command_name == "resync-engine":
         return
 
-    if command_name not in ("libpinyin", "libbopomofo"):
-        command_name = "libpinyin"
+    if command_name not in ("smartpinyin", "smartbopomofo"):
+        command_name = "smartpinyin"
 
     PreferencesDialog(command_name).run()
 

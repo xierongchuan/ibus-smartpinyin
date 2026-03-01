@@ -1,6 +1,6 @@
 /* vim:set et ts=4 sts=4:
  *
- * ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+ * ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
  *
  * Copyright (c) 2018 Peng Wu <alexepico@gmail.com>
  *
@@ -43,7 +43,8 @@ enum CandidateType {
     CANDIDATE_CLOUD_INPUT,
     CANDIDATE_EMOJI,
     CANDIDATE_ENGLISH,
-    CANDIDATE_PREDICTED_PUNCTUATION
+    CANDIDATE_PREDICTED_PUNCTUATION,
+    CANDIDATE_USER_PHRASE
 };
 
 enum SelectCandidateAction {

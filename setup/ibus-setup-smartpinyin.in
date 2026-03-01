@@ -1,9 +1,9 @@
-# vim:set et ts=4 sts=4:
+#!/bin/sh
+# vim:set noet ts=4:
 #
-# ibus-smartpinyin - Smart Pinyin engine based on libpinyin for IBus
+# ibus-tmpl - The Input Bus template project
 #
-# Copyright (c) 2008-2010 Peng Huang <shawn.p.huang@gmail.com>
-# Copyright (c) 2013 Peng Wu <alexepico@gmail.com>
+# Copyright (c) 2007-2008 Peng Huang <shawn.p.huang@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,24 +19,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import gettext
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+datarootdir=@datarootdir@
+pkgdatadir=@prefix@/share/@PACKAGE@
+export IBUS_PREFIX=@prefix@
+export IBUS_DATAROOTDIR=@datarootdir@
+export IBUS_LOCALEDIR=@localedir@
+export IBUS_PKGDATADIR=@prefix@/share/@PACKAGE@
+cd @prefix@/share/@PACKAGE@/setup/
+exec @PYTHON@ main2.py $@
 
-gettext.install("ibus-smartpinyin")
-
-def get_version():
-    return "@VERSION@"
-
-def get_longname():
-    return _("Smart Pinyin")
-
-def support_cloud_input():
-    return @CLOUD_INPUT_MODE@
-
-def enable_lua_extension():
-    return @LUA_EXTENSION@
-
-def enable_table_mode():
-    return @TABLE_INPUT_MODE@
-
-def enable_english_input_mode():
-    return @ENGLISH_INPUT_MODE@

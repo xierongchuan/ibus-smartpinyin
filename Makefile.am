@@ -1,6 +1,6 @@
 # vim:set noet ts=4:
 #
-# ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+# ibus-smartpinyin - Intelligent Pinyin engine based on libpinyin for IBus
 #
 # Copyright (c) 2008-2010 Peng Huang <shawn.p.huang@gmail.com>
 #
@@ -40,7 +40,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = config.rpath  \
 	autogen.sh \
-	ibus-libpinyin.spec.in \
+	ibus-smartpinyin.spec.in \
 	$(NULL)
 
 noinst_DIST = \

@@ -1,6 +1,6 @@
 # vim:set noet ts=4:
 #
-# ibus-libpinyin - Intelligent Pinyin engine based on libpinyin for IBus
+# ibus-smartpinyin - Intelligent Pinyin engine based on libpinyin for IBus
 #
 # Copyright (c) 2008-2010 Peng Huang <shawn.p.huang@gmail.com>
 #
@@ -17,20 +17,20 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-setup_libpinyin_PYTHON = \
+setup_smartpinyin_PYTHON = \
 	main2.py \
 	config.py \
 	dicttreeview.py \
 	enginefile.py \
 	shortcuteditor.py \
 	keyboardshortcut.py \
-	ibus-libpinyin-preferences.ui \
+	ibus-smartpinyin-preferences.ui \
 	$(NULL)
 
-setup_libpinyindir = $(datadir)/ibus-libpinyin/setup
+setup_smartpinyindir = $(datadir)/ibus-smartpinyin/setup
 
 libexec_SCRIPTS = \
-	ibus-setup-libpinyin \
+	ibus-setup-smartpinyin \
 	$(NULL)
 
 CLEANFILES = \
@@ -42,20 +42,20 @@ CLEANFILES = \
 
 EXTRA_DIST = \
 	config.py.in \
-	ibus-setup-libpinyin.in \
+	ibus-setup-smartpinyin.in \
 	$(NULL)
 
 
-test-libpinyin:
+test-smartpinyin:
 	$(ENV) DBUS_DEBUG=true \
 		   IBUS_LOCALEDIR=@localedir@ \
 		   IBUS_PKGDATADIR=$(pkgdatadir) \
 		   PYTHONPATH=$(abs_top_srcdir):$(pyexecdir) \
-		   $(PYTHON) $(srcdir)/main2.py libpinyin
+		   $(PYTHON) $(srcdir)/main2.py smartpinyin
 
-test-libbopomofo:
+test-smartbopomofo:
 	$(ENV) DBUS_DEBUG=true \
 		   IBUS_LOCALEDIR=@localedir@ \
 		   IBUS_PKGDATADIR=$(pkgdatadir) \
 		   PYTHONPATH=$(abs_top_srcdir):$(pyexecdir) \
-		   $(PYTHON) $(srcdir)/main2.py libbopomofo
+		   $(PYTHON) $(srcdir)/main2.py smartbopomofo

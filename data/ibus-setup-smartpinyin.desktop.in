@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=IBus Smart Pinyin Setup
+Comment=Set ibus-smartpinyin Preferences
+Exec=@libexecdir@/ibus-setup-smartpinyin smartpinyin
+Icon=@pkgdatadir@/icons/ibus-pinyin.svg
+NoDisplay=true
+Type=Application
+StartupNotify=true

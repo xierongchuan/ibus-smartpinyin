@@ -8,9 +8,9 @@ olddir=$(pwd)
 
 cd "$srcdir"
 
-PKG_NAME="ibus-libpinyin"
+PKG_NAME="ibus-smartpinyin"
 
-(test -f configure.ac && test -f README ) || {
+(test -f configure.ac && test -f README.md ) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
     echo " top-level $PKG_NAME directory"
     exit 1
