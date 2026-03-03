@@ -12,6 +12,7 @@
 播主 bo'zhu 10
 补番 bu'fan 10
 病娇 bing'jiao 10
+𰻞𰻞面 biang'biang'mian 10
 背锅 bei'guo 10
 槽点 cao'dian 5
 逗逼 dou'bi 10
@@ -136,6 +137,7 @@
 𠳐 bang 1
 𬇙 bei 1
 𨚕 bian 1
+𰻞 biang 1
 癿 bie 1
 𬭛 bo 1
 蕃 bo 1
