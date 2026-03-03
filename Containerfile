@@ -13,9 +13,9 @@ RUN dnf install -y \
     libnotify-devel \
     python3 python3-gobject python3-numpy \
     ibus ibus-gtk3 ibus-panel gtk3 mousepad adwaita-icon-theme \
-    wqy-zenhei-fonts \
+    google-noto-sans-cjk-fonts google-noto-serif-cjk-fonts \
     tigervnc-server xorg-x11-server-Xvfb dbus-x11 \
-    openbox xorg-x11-fonts-misc \
+    openbox \
     python3-websockify procps-ng \
     && dnf clean all
 
@@ -110,6 +110,8 @@ echo "=================================================="
 echo ""
 
 # 9. Open GTK text editor
+gsettings set org.xfce.mousepad.preferences.view use-default-font false 2>/dev/null || true
+gsettings set org.xfce.mousepad.preferences.view font-name 'Noto Sans CJK SC 14' 2>/dev/null || true
 mousepad &
 
 # 10. Tail ibus engine log so podman logs shows it

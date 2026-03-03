@@ -30,7 +30,7 @@ m4_define([ibus_version],
     ibus_major_version.ibus_minor_version.ibus_micro_version[]ibus_maybe_datestamp)
 
 AC_INIT([ibus-smartpinyin], [ibus_version], [https://github.com/xierongchuan/ibus-smartpinyin/issues/new],[ibus-smartpinyin])
-AM_INIT_AUTOMAKE([1.10])
+AM_INIT_AUTOMAKE([1.10 foreign])
 AC_GNU_SOURCE
 
 AC_CONFIG_HEADERS([config.h])
