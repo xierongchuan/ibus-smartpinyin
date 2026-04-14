@@ -25,6 +25,9 @@
 #include <time.h>
 #include <glib.h>
 #include <stdio.h>
+#include <set>
+#include <string>
+#include <vector>
 
 typedef struct _pinyin_context_t pinyin_context_t;
 typedef struct _pinyin_instance_t pinyin_instance_t;
@@ -61,6 +64,10 @@ public:
     gboolean rememberUserInput (pinyin_instance_t *instance, const gchar *pinyin, const gchar *phrase);
     gboolean rememberCloudInput (pinyin_instance_t *instance, const gchar *pinyin, const gchar *phrase);
 
+    void addCustomSyllable (const std::string &syl);
+    bool isCustomSyllable (const std::string &syl) const;
+    void mergeCustomSyllables (std::vector<std::string> &fragments) const;
+
     /* use static initializer in C++. */
     static LibPinyinBackEnd & instance (void) { return *m_instance; }
 
@@ -96,6 +103,9 @@ private:
 
     guint m_timeout_id;
     GTimer *m_timer;
+
+private:
+    std::set<std::string> m_custom_syllables;
 
 private:
     static std::unique_ptr<LibPinyinBackEnd> m_instance;

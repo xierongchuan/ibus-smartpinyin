@@ -287,6 +287,14 @@ LibPinyinBackEnd::importPinyinDictionary (const char *filename)
 
         pinyin_iterator_add_phrase (iter, phrase, pinyin, count);
 
+        /* Register custom syllables during user dict import */
+        gchar ** syls = g_strsplit (pinyin, "'", -1);
+        for (gint i = 0; syls && syls[i]; ++i) {
+            if (strlen(syls[i]) > 0)
+                addCustomSyllable (std::string(syls[i]));
+        }
+        g_strfreev (syls);
+
         g_strfreev (items);
     }
 
@@ -430,6 +438,9 @@ extractSyllablesFromInstance (pinyin_instance_t *instance, const gchar *raw_text
         syllables.push_back (syl);
         begin = end;
     }
+    
+    LibPinyinBackEnd::instance ().mergeCustomSyllables (syllables);
+
     debug_log ("extractSyllables: raw='%s' count=%zu", raw_text, syllables.size ());
     return syllables;
 }
@@ -654,9 +665,63 @@ LibPinyinBackEnd::importRestNetworkDictionary (pinyin_context_t * context,
         pinyin_iterator_add_phrase (iter, phrase, pinyin, count);
         retval = TRUE;
 
+        /* Register custom syllables during network dict import */
+        gchar ** syls = g_strsplit (pinyin, "'", -1);
+        for (gint i = 0; syls && syls[i]; ++i) {
+            if (strlen(syls[i]) > 0)
+                addCustomSyllable (std::string(syls[i]));
+        }
+        g_strfreev (syls);
+
         g_strfreev (items);
     }
 
     pinyin_end_add_phrases (iter);
     return retval;
+}
+
+void LibPinyinBackEnd::addCustomSyllable (const std::string &syl)
+{
+    m_custom_syllables.insert (syl);
+}
+
+bool LibPinyinBackEnd::isCustomSyllable (const std::string &syl) const
+{
+    return m_custom_syllables.find (syl) != m_custom_syllables.end ();
+}
+
+void LibPinyinBackEnd::mergeCustomSyllables (std::vector<std::string> &fragments) const
+{
+    if (fragments.size () <= 1)
+        return;
+
+    std::vector<std::string> merged;
+    size_t i = 0;
+    while (i < fragments.size ()) {
+        // Try merging with next fragment
+        if (i + 1 < fragments.size ()) {
+            std::string combined2 = fragments[i] + fragments[i+1];
+            if (isCustomSyllable (combined2)) {
+                merged.push_back (combined2);
+                i += 2;
+                continue;
+            }
+            // Try merging with next two fragments (rare, but just in case)
+            if (i + 2 < fragments.size ()) {
+                std::string combined3 = combined2 + fragments[i+2];
+                if (isCustomSyllable (combined3)) {
+                    merged.push_back (combined3);
+                    i += 3;
+                    continue;
+                }
+            }
+        }
+        // No match, keep single fragment
+        merged.push_back (fragments[i]);
+        i++;
+    }
+    
+    if (merged.size () < fragments.size ()) {
+        fragments = merged;
+    }
 }

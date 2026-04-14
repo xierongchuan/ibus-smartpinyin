@@ -124,6 +124,8 @@ FullPinyinEditor::updatePinyin (void)
         m_pinyin_fragments.push_back (std::string (m_text.c_str () + frag_begin, frag_end - frag_begin));
         frag_begin = frag_end;
     }
+    
+    LibPinyinBackEnd::instance ().mergeCustomSyllables (m_pinyin_fragments);
 }
 
 void
@@ -140,10 +142,14 @@ FullPinyinEditor::updateAuxiliaryText (void)
 
     m_buffer.clear ();
 
-    gchar * aux_text = NULL;
-    pinyin_get_full_pinyin_auxiliary_text (m_instance, m_cursor, &aux_text);
-    m_buffer << aux_text;
-    g_free(aux_text);
+    /* Reconstruct auxiliary text directly from custom-merged fragments */
+    std::string custom_aux;
+    for (size_t i = 0; i < m_pinyin_fragments.size (); i++) {
+        if (i > 0)
+            custom_aux += "'";
+        custom_aux += m_pinyin_fragments[i];
+    }
+    m_buffer << custom_aux.c_str ();
 
     /* append rest text */
     const gchar * p = m_text.c_str() + m_pinyin_len;
