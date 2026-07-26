@@ -3,6 +3,7 @@ ibus-smartpinyin — fork of ibus-libpinyin
 
 version 1.17.0 (first release of ibus-smartpinyin)
 * forked from ibus-libpinyin 1.16.5
+* synced with upstream ibus-libpinyin 1.16.6
 * added SQLite-based user phrase learning (PYUserPhraseDatabase)
 * added UserPhraseCandidates provider with frequency-based promotion
 * syllable prefix matching for learned phrases
@@ -10,6 +11,13 @@ version 1.17.0 (first release of ibus-smartpinyin)
   GSettings schema, data directories — can coexist with original
 
 --- history from upstream ibus-libpinyin ---
+
+version 1.16.6
+* drop the Baidu cloud input source, default to Google CN
+* fix pinyin_train usage
+* fix LibPinyinCandidates::selectCandidate method
+* fix init-simplified-chinese default for libbopomofo
+* fix setup/Makefile.am CLEANFILES
 
 version 1.16.5
 * bug fixes

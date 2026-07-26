@@ -381,7 +381,16 @@ When enabled, all candidate types (NBEST_MATCH, LONGER, NORMAL, etc.) trigger `r
 
 ## Debug Logging
 
-All components write to `/tmp/user-phrase-debug.log` using a file-based logger. This is necessary because ibus-daemon with the `-d` flag redirects the engine's stdout/stderr to `/dev/null`.
+All components share the file-based logger in `src/PYDebugLog.h`. A file logger is necessary because ibus-daemon with the `-d` flag redirects the engine's stdout/stderr to `/dev/null`.
+
+Logging is **off by default** — the traces contain everything the user types, so they are only written when the `IBUS_SMARTPINYIN_DEBUG_LOG` environment variable points at a log file:
+
+```bash
+IBUS_SMARTPINYIN_DEBUG_LOG=$HOME/smartpinyin.log ibus-daemon -drx
+tail -f ~/smartpinyin.log
+```
+
+The log file is created with `0600` permissions and opened with `O_NOFOLLOW`, so pointing it at a shared directory such as `/tmp` does not expose the traces to other users.
 
 Log entries include timestamps and cover:
 - Database open/create operations
@@ -406,6 +415,33 @@ Example log output:
 [14:23:05]   promote '形容词' freq=20 from=0 to=0
 [14:23:05]   promote '谢榕川' freq=6 from=5 to=1
 ```
+
+## Automated Test
+
+`src/test-user-phrase-database.cc` is a regression test for the database layer,
+run by `make check` (and therefore by `make distcheck` and by CI):
+
+```bash
+./autogen.sh && make && make check
+# or run it on its own for the per-check output
+./src/test-user-phrase-database
+```
+
+It drives `UserPhraseDatabase` directly — no IBus session and no libpinyin data
+files are needed — and points `XDG_CACHE_HOME` at a throw-away directory, so the
+developer's own `~/.cache/ibus/smartpinyin/user-phrases.db` is never touched.
+
+It covers the behaviour this fork exists for, plus the surrounding contract:
+
+| Area | Checks |
+| --- | --- |
+| Learning | a phrase is stored with its syllables; re-learning bumps `freq` instead of duplicating |
+| Initials matching | `z h r m g h g` recalls `中华人民共和国`, as do the full syllables and any partial prefix (`zh hu r mi g he g`) |
+| Non-matches | a different syllable count, a wrong initial, and a non-anchored fragment (`hong ua …`) all return nothing |
+| Ranking | a higher-`freq` phrase is offered first; the `limit` argument caps the result count |
+| Removal | `removePhrase` deletes the row, is a no-op the second time, and re-learning restarts the counter |
+| Bad input | `NULL` phrases and empty syllable/fragment lists are rejected without touching the database |
+| Debug logging | nothing is written unless `IBUS_SMARTPINYIN_DEBUG_LOG` is set, and the log file is created `0600` |
 
 ## Key Bugs Discovered and Fixed
 
