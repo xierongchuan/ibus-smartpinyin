@@ -20,27 +20,9 @@
 
 #include "PYPUserPhraseCandidates.h"
 #include <assert.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <time.h>
 #include "PYPPhoneticEditor.h"
 #include "PYConfig.h"
-
-static void
-debug_log (const char *fmt, ...)
-{
-    FILE *f = fopen ("/tmp/user-phrase-debug.log", "a");
-    if (!f) return;
-    time_t now = time (NULL);
-    struct tm *t = localtime (&now);
-    fprintf (f, "[%02d:%02d:%02d] ", t->tm_hour, t->tm_min, t->tm_sec);
-    va_list ap;
-    va_start (ap, fmt);
-    vfprintf (f, fmt, ap);
-    va_end (ap);
-    fprintf (f, "\n");
-    fclose (f);
-}
+#include "PYDebugLog.h"
 
 using namespace PY;
 

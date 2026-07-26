@@ -381,7 +381,16 @@ When enabled, all candidate types (NBEST_MATCH, LONGER, NORMAL, etc.) trigger `r
 
 ## Debug Logging
 
-All components write to `/tmp/user-phrase-debug.log` using a file-based logger. This is necessary because ibus-daemon with the `-d` flag redirects the engine's stdout/stderr to `/dev/null`.
+All components share the file-based logger in `src/PYDebugLog.h`. A file logger is necessary because ibus-daemon with the `-d` flag redirects the engine's stdout/stderr to `/dev/null`.
+
+Logging is **off by default** — the traces contain everything the user types, so they are only written when the `IBUS_SMARTPINYIN_DEBUG_LOG` environment variable points at a log file:
+
+```bash
+IBUS_SMARTPINYIN_DEBUG_LOG=$HOME/smartpinyin.log ibus-daemon -drx
+tail -f ~/smartpinyin.log
+```
+
+The log file is created with `0600` permissions and opened with `O_NOFOLLOW`, so pointing it at a shared directory such as `/tmp` does not expose the traces to other users.
 
 Log entries include timestamps and cover:
 - Database open/create operations

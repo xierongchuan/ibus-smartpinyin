@@ -80,6 +80,7 @@ ibus_engine_smartpinyin_h_sources = \
 	PYPSuggestionCandidates.h \
 	PYPEmojiTable.h \
 	PYPEmojiCandidates.h \
+	PYDebugLog.h \
 	PYUserPhraseDatabase.h \
 	PYPUserPhraseCandidates.h \
 	PYXMLUtil.h \
