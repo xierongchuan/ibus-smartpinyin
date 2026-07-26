@@ -416,6 +416,33 @@ Example log output:
 [14:23:05]   promote '谢榕川' freq=6 from=5 to=1
 ```
 
+## Automated Test
+
+`src/test-user-phrase-database.cc` is a regression test for the database layer,
+run by `make check` (and therefore by `make distcheck` and by CI):
+
+```bash
+./autogen.sh && make && make check
+# or run it on its own for the per-check output
+./src/test-user-phrase-database
+```
+
+It drives `UserPhraseDatabase` directly — no IBus session and no libpinyin data
+files are needed — and points `XDG_CACHE_HOME` at a throw-away directory, so the
+developer's own `~/.cache/ibus/smartpinyin/user-phrases.db` is never touched.
+
+It covers the behaviour this fork exists for, plus the surrounding contract:
+
+| Area | Checks |
+| --- | --- |
+| Learning | a phrase is stored with its syllables; re-learning bumps `freq` instead of duplicating |
+| Initials matching | `z h r m g h g` recalls `中华人民共和国`, as do the full syllables and any partial prefix (`zh hu r mi g he g`) |
+| Non-matches | a different syllable count, a wrong initial, and a non-anchored fragment (`hong ua …`) all return nothing |
+| Ranking | a higher-`freq` phrase is offered first; the `limit` argument caps the result count |
+| Removal | `removePhrase` deletes the row, is a no-op the second time, and re-learning restarts the counter |
+| Bad input | `NULL` phrases and empty syllable/fragment lists are rejected without touching the database |
+| Debug logging | nothing is written unless `IBUS_SMARTPINYIN_DEBUG_LOG` is set, and the log file is created `0600` |
+
 ## Key Bugs Discovered and Fixed
 
 ### 1. Wrong API for Syllable Extraction

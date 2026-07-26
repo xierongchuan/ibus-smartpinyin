@@ -233,6 +233,39 @@ ibus_engine_smartpinyin_LDADD += \
 	$(NULL)
 endif
 
+check_PROGRAMS = \
+	test-user-phrase-database \
+	$(NULL)
+
+TESTS = $(check_PROGRAMS)
+
+test_user_phrase_database_SOURCES = \
+	test-user-phrase-database.cc \
+	PYUserPhraseDatabase.cc \
+	PYUserPhraseDatabase.h \
+	PYDebugLog.h \
+	$(NULL)
+
+test_user_phrase_database_CXXFLAGS = \
+	@IBUS_CFLAGS@ \
+	@SQLITE_CFLAGS@ \
+	$(NULL)
+
+test_user_phrase_database_LDADD = \
+	@IBUS_LIBS@ \
+	@SQLITE_LIBS@ \
+	$(NULL)
+
+if HAVE_BOOST
+test_user_phrase_database_CXXFLAGS += \
+	@BOOST_CPPFLAGS@ \
+	$(NULL)
+else
+test_user_phrase_database_CXXFLAGS += \
+	-std=c++0x \
+	$(NULL)
+endif
+
 BUILT_SOURCES = \
 	$(ibus_engine_built_c_sources) \
 	$(ibus_engine_built_h_sources) \
